@@ -1,8 +1,7 @@
-#How i mean before, i just 'expand the tool arp-scan'
-#the tool wich i use in this script its from: https://github.com/royhills/arp-scan
+# Some options in this script was maded using arp-scan from: https://github.com/royhills/arp-scan
 
 import ftplib, os, argparse
-from colorama import init, Fore, Style, Back
+from colorama import init, Fore, Style
 def clear(): os.system('clear')
 init(autoreset=True)
 
@@ -17,9 +16,9 @@ class c:
 bf = Style.RESET_ALL
 bt = Style.BRIGHT
 
-parser = argparse.ArgumentParser(add_help=False)
-parser.add_argument('-f')
-parser.add_argument('--add')
+parser = argparse.ArgumentParser()
+parser.add_argument('-f', help='[SCAN AN LIST WITH DIRECTIONS]')
+parser.add_argument('--add', help='[ADD ALL LOCAL DIRECTIONS TO A LIST]')
 args = parser.parse_args()
 
 clear()
@@ -29,12 +28,13 @@ print(rf""" {c.y}
  / /_\// /   //_\\  /  \/ //_\\  / \// / /_)/    {c.r + 'by glandesmates' + c.y}
 / /_\\/ /___/  _  \/ /\  /  _  \/ _  \/ ___/  
 \____/\____/\_/ \_/\_\ \/\_/ \_/\/ \_/\/      
-{c.g}   this tool only works with arp package
+{c.g}     be careful with this beast
 """); print()
 
 if not os.path.exists('/usr/share/man/man1/arp-scan.1.gz'):
-    print(f"{'  '*5} [{c.s + bt}!{bf}] {c.w + bt} Installing arp-scan..." + bf); print()
+    print(f"{'  '*10} {c.w}[{c.s + bt}!{bf + c.w}] {c.w + bt} Installing arp-scan..." + bf); print()
     os.system('sudo apt-get install arp-scan > .txt')
+    print(f"{'  '*10} {c.w + bt}[{c.g}✔{c.w}] arp-scan was {c.g}installed")
 else:
     pass
 
@@ -43,10 +43,10 @@ print();print()
 def connect(ip):
     with ftplib.FTP() as ftp:
         try:
-            ftp.connect(ip, timeout=3.6)
+            ftp.connect(ip, timeout=5)
             print(f"[{c.g + '✔' + c.c}] {c.g + bt + 'Accesible '+ c.c} > {c.g + ip + c.c}")
         except:
-            print(f"[{c.r + 'x' + c.c + bf}] {c.r + bt + 'Cant' + c.c + bf} {c.w + 'connect to ' + c.c + bt} > {c.y + ip + c.c}")
+            print(f"[{c.r + 'x' + c.c + bf}] {c.r + bt + 'Not Accesible ' + c.c + bt} > {c.y + ip + c.c}")
 
 global count, ip_list
 count = 0; ip_list = []
@@ -70,17 +70,18 @@ if not args.f:
                     else:
                         with open(args.add, 'w') as f:
                             f.write(ip + '\n')
-                connect(ip); print()
+                connect(ip.rstrip('\n')); print()
             else:
                 pass
 else:
-    with open(args.f, 'r') as f:
+    with open(args.f, 'r+') as f:
         lines = f.readlines()
         for ip in lines:
             count += 1
-            connect(ip)
+            connect(ip.rstrip('\n'))
 
-print(); print(f"""{'         '*3}[{c.g + '✔' + c.c}] {c.w + 'Scan completed'}""")
+print(); print(); print(f"""{'         '*2}[{c.g + '✔' + c.c}] {c.w + 'Scan completed, with ' + f'{c.g + bt + str(count) + bf + c.w}' + ' directions finded'}""")
 
 if os.path.exists('.txt'): os.system('rm .txt')
 else: pass
+
