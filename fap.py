@@ -48,6 +48,8 @@ def connect(ip):
         except:
             print(f"[{c.r + 'x' + c.c + bf}] {c.r + bt + 'Cant' + c.c + bf} {c.w + 'connect to ' + c.c + bt} > {c.y + ip + c.c}")
 
+global count, ip_list
+count = 0; ip_list = []
 
 if not args.f:
     MSG = f"    [{c.y + '>' + c.c}] {c.g + f'Enter a name to your file {bt}(press enter if you dont want){bf}' + c.c} > "
@@ -59,7 +61,15 @@ if not args.f:
 
         for item in lines:
             if item.startswith('1'):
-                ip = item[:14]; print(c.s + item.strip())
+                count += 1
+                ip = item[:14]; print(c.s + item.strip() + f"  {c.g + bt}---> {c.w + str(count)}")
+                if args.add:
+                    if os.path.exists(args.add):
+                        with open(args.add, 'a+') as f:
+                            f.write(ip + '\n')
+                    else:
+                        with open(args.add, 'w') as f:
+                            f.write(ip + '\n')
                 connect(ip); print()
             else:
                 pass
@@ -67,11 +77,10 @@ else:
     with open(args.f, 'r') as f:
         lines = f.readlines()
         for ip in lines:
+            count += 1
             connect(ip)
 
-print(); print(f"{'         '*3}[{c.g + '✔' + c.c}] {c.w + 'Scan completed'}")
-
+print(); print(f"""{'         '*3}[{c.g + '✔' + c.c}] {c.w + 'Scan completed'}""")
 
 if os.path.exists('.txt'): os.system('rm .txt')
 else: pass
-
