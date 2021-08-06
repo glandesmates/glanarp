@@ -48,8 +48,8 @@ def connect(ip):
         except:
             print(f"[{c.r + 'x' + c.c + bf}] {c.r + bt + 'Not Accesible ' + c.c + bt} > {c.y + ip + c.c}")
 
-global count, ip_list
-count = 0; ip_list = []
+global count
+count = 0
 
 if not args.f:
     MSG = f"    [{c.y + '>' + c.c}] {c.g + f'Enter a name to your file {bt}(press enter if you dont want){bf}' + c.c} > "
@@ -80,8 +80,7 @@ else:
             count += 1
             connect(ip.rstrip('\n'))
 
-print(); print(); print(f"""{'         '*2}[{c.g + '✔' + c.c}] {c.w + 'Scan completed, with ' + f'{c.g + bt + str(count) + bf + c.w}' + ' directions finded'}""")
+print(); print(); print(f"{'         '*2}[{c.g + '✔' + c.c}] {c.w + 'Scan completed, with ' + f'{c.g + bt + str(count) + bf + c.w}' + ' directions finded'}")
 
 if os.path.exists('.txt'): os.system('rm .txt')
 else: pass
-
