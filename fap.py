@@ -19,6 +19,7 @@ bt = Style.BRIGHT
 parser = argparse.ArgumentParser()
 parser.add_argument('-f', help='[SCAN AN LIST WITH DIRECTIONS]')
 parser.add_argument('--add', help='[ADD ALL LOCAL DIRECTIONS TO A LIST]')
+parser.add_argument('--filter', help='[SEPARATE NO ACCESSIBLES AND ACCESSIBLES DIRECTIONS]')
 args = parser.parse_args()
 
 clear()
@@ -40,13 +41,30 @@ else:
 
 print();print()
 
+def filter(c, ip):
+    if args.f and args.filter:
+        name = f'{args.f}#{c}'; l = list()
+        
+        if os.path.exists(name): pass
+        else: open(name, 'w')
+
+        l.append(ip)
+        with open(name, 'a+') as f:
+            for item in l:
+                f.write(item + '\n')
+
 def connect(ip):
     with ftplib.FTP() as ftp:
         try:
             ftp.connect(ip, timeout=5)
-            print(f"[{c.g + '✔' + c.c}] {c.g + bt + 'Accesible '+ c.c} > {c.g + ip + c.c}")
+            print(f"[{c.g + '✔' + c.c}] {c.g + bt + 'Accessible '+ c.c} > {c.g + ip + c.c}")
+            filter('true', ip)
+        except KeyboardInterrupt:
+            print(f"\n{'    '*6}{c.y + bt}[{c.r}!{c.y}] {c.r}Break"); exit()
         except:
-            print(f"[{c.r + 'x' + c.c + bf}] {c.r + bt + 'Not Accesible ' + c.c + bt} > {c.y + ip + c.c}")
+            print(f"[{c.r + 'x' + c.c + bf}] {c.r + bt + 'Accessible ' + c.c + bt} > {c.y + ip + c.c}")
+            filter('false', ip)
+
 
 global count
 count = 0
