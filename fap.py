@@ -20,6 +20,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-f', help='[SCAN AN LIST WITH DIRECTIONS]')
 parser.add_argument('--add', help='[ADD ALL LOCAL DIRECTIONS TO A LIST]')
 parser.add_argument('--filter', help='[SEPARATE NO ACCESSIBLES AND ACCESSIBLES DIRECTIONS]')
+parser.add_argument('-i')
+
 args = parser.parse_args()
 
 clear()
@@ -72,7 +74,11 @@ count = 0
 if not args.f:
     MSG = f"    [{c.y + '>' + c.c}] {c.g + f'Enter a name to your file {bt}(press enter if you dont want){bf}' + c.c} > "
     name = f"{input(MSG)}.txt"; print(); print()
-    os.system(f'sudo arp-scan --interface=eth0 --localnet > {name}')
+
+    if args.i == 'eth0':
+        os.system(f'sudo arp-scan --interface=eth0 --localnet > {name}')
+    else:
+        os.system(f'sudo arp-scan --interface=wlan0 --localnet > {name}')
 
     with open(name, 'r') as f:
         lines = f.readlines()
