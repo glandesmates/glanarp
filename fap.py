@@ -78,6 +78,7 @@ def filter(c, ip):
 nm = nmap3.NmapScanTechniques()
 
 def scan(ip):
+    print(f"Scanning {color['exgreen'] + ip + color['reset']}...")
     scan = nm.nmap_tcp_scan(ip, args='-Pn')
     for ports in scan[ip]['ports']:
 
@@ -106,7 +107,7 @@ def connect(ip):
             print(f"[{c.r + 'x' + c.c + bf}] {c.r + bt + 'Accessible ' + c.c + bt} > {c.y + ip + c.c}")
             filter('false', ip)
 
-def doit():
+def doit(ip):
     if not args.ftp and not args.nmap:
         connect(ip.rstrip('\n'))
     elif args.ftp and args.nmap:
@@ -142,7 +143,7 @@ if not args.f:
                     else:
                         with open(args.add, 'w') as f:
                             f.write(ip + '\n')
-                doit(); print()
+                doit(ip); print()
             else:
                 pass
 else:
@@ -150,7 +151,7 @@ else:
         lines = f.readlines()
         for ip in lines:
             count += 1
-            doit()
+            doit(ip)
 
 print(); print(); print(f"{'         '*2}[{c.g + '✔' + c.c}] {c.w + 'Scan completed, with ' + f'{c.g + bt + str(count) + bf + c.w}' + ' directions finded'}")
 
