@@ -1,6 +1,4 @@
-# Some options in this script was maded using arp-scan from: https://github.com/royhills/arp-scan
-
-import ftplib, os, argparse
+import ftplib, os, argparse, nmap3
 from colorama import init, Fore, Style
 def clear(): os.system('clear')
 init(autoreset=True)
@@ -13,15 +11,37 @@ class c:
     s = Fore.LIGHTMAGENTA_EX
     c = Fore.RESET
 
+color = {
+ 'exyellow': Fore.YELLOW + Style.BRIGHT,
+ 'green': Fore.GREEN,
+ 'red': Fore.LIGHTRED_EX,
+ 'exgreen': Fore.BLUE + Style.BRIGHT,
+ 'white': Fore.LIGHTWHITE_EX,
+ 'reset': Fore.RESET + Style.RESET_ALL,
+}
+
+cash = color['green'] + '$'
+cause = color['exyellow'] + '*'
+
 bf = Style.RESET_ALL
 bt = Style.BRIGHT
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(add_help=False, usage=f"""{c.w + Style.BRIGHT}
+[    -i    ]                    interface
+[    -f    ]            read directions from a file
+
+[   --add  ]               save only directions
+[ --filter ]    filter directions (accessibles and not accessibles)
+
+[  --nmap  ]    show the avaliable services (ftp, telnet, ssh, etc)
+
+""")
+parser.add_argument('-i', help=f'{c.w}[interface]')
 parser.add_argument('-f', help='[SCAN AN LIST WITH DIRECTIONS]')
 parser.add_argument('--add', help='[ADD ALL LOCAL DIRECTIONS TO A LIST]')
-parser.add_argument('--filter', help='[SEPARATE NO ACCESSIBLES AND ACCESSIBLES DIRECTIONS]')
-parser.add_argument('-i')
-
+parser.add_argument('--filter', help='[SEPARATE NO ACCESSIBLES AND ACCESSIBLES DIRECTIONS]', action='store_true')
+parser.add_argument('--nmap', action='store_true')
+parser.add_argument('--ftp', action='store_true')
 args = parser.parse_args()
 
 clear()
@@ -55,6 +75,25 @@ def filter(c, ip):
             for item in l:
                 f.write(item + '\n')
 
+nm = nmap3.NmapScanTechniques()
+
+def scan(ip):
+    scan = nm.nmap_tcp_scan(ip, args='-Pn')
+    for ports in scan[ip]['ports']:
+
+        state = ports['state']
+        if state == 'open':
+            state = color['exgreen'] + state
+        else:
+            state = color['red'] + state
+
+        print(f"Service: {color['white'] + ports['service']['name']}  {cash + color['reset']}  State: {state} {cause} {color['reset'] + ports['reason']}  {cash}  {color['reset']}Port ID: {color['exyellow'] + ports['portid']}")
+    
+    print()
+    
+    for hn in scan[ip]['hostname']:
+        print(f"Hostname: {hn['name']}  {cash}  {color['reset']}type: {hn['type']}\n")
+
 def connect(ip):
     with ftplib.FTP() as ftp:
         try:
@@ -66,6 +105,15 @@ def connect(ip):
         except:
             print(f"[{c.r + 'x' + c.c + bf}] {c.r + bt + 'Accessible ' + c.c + bt} > {c.y + ip + c.c}")
             filter('false', ip)
+
+def doit():
+    if not args.ftp and not args.nmap:
+        connect(ip.rstrip('\n'))
+    elif args.ftp and args.nmap:
+        connect(ip.rstrip('\n'))
+        scan(ip.rstrip('\n'))
+    elif args.nmap and not args.ftp:
+        scan(ip.rstrip('\n'))
 
 
 global count
@@ -94,7 +142,7 @@ if not args.f:
                     else:
                         with open(args.add, 'w') as f:
                             f.write(ip + '\n')
-                connect(ip.rstrip('\n')); print()
+                doit(); print()
             else:
                 pass
 else:
@@ -102,7 +150,7 @@ else:
         lines = f.readlines()
         for ip in lines:
             count += 1
-            connect(ip.rstrip('\n'))
+            doit()
 
 print(); print(); print(f"{'         '*2}[{c.g + '✔' + c.c}] {c.w + 'Scan completed, with ' + f'{c.g + bt + str(count) + bf + c.w}' + ' directions finded'}")
 
