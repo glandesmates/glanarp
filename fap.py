@@ -79,7 +79,11 @@ nm = nmap3.NmapScanTechniques()
 
 def scan(ip):
     print(f"Scanning {color['exgreen'] + ip + color['reset']}...")
-    scan = nm.nmap_tcp_scan(ip, args='-Pn')
+    if args.nmap == '-sV':
+        scan = nm.nmap_tcp_scan(ip)
+    elif args.nmap == '-sS':
+        scan = nm.nmap_syn_scan(ip)
+
     for ports in scan[ip]['ports']:
 
         state = ports['state']
