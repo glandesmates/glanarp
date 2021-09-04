@@ -40,7 +40,7 @@ parser.add_argument('-i', help=f'{c.w}[interface]')
 parser.add_argument('-f', help='[SCAN AN LIST WITH DIRECTIONS]')
 parser.add_argument('--add', help='[ADD ALL LOCAL DIRECTIONS TO A LIST]')
 parser.add_argument('--filter', help='[SEPARATE NO ACCESSIBLES AND ACCESSIBLES DIRECTIONS]', action='store_true')
-parser.add_argument('--nmap', action='store_true')
+parser.add_argument('--nmap', help='[ENTER sS OR sV ARGUMENT]')
 parser.add_argument('--ftp', action='store_true')
 args = parser.parse_args()
 
@@ -79,9 +79,9 @@ nm = nmap3.NmapScanTechniques()
 
 def scan(ip):
     print(f"Scanning {color['exgreen'] + ip + color['reset']}...")
-    if args.nmap == '-sV':
+    if args.nmap == 'sV':
         scan = nm.nmap_tcp_scan(ip)
-    elif args.nmap == '-sS':
+    elif args.nmap == 'sS':
         scan = nm.nmap_syn_scan(ip)
 
     for ports in scan[ip]['ports']:
