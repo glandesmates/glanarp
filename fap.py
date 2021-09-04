@@ -1,4 +1,18 @@
-import ftplib, os, argparse, nmap3
+import ftplib, os
+
+try:
+    import argparse
+except:
+    print("Installing argparse module...")
+    os.system('pip3 install argparse > .txt')
+    os.system('sudo pip3 install argparse > .txt')
+try:
+    import nmap3
+except:
+    print("Installing nmap module...")
+    os.system('pip3 install python3-nmap > .txt')
+    os.system('sudo pip3 install python3-nmap > .txt')
+
 from colorama import init, Fore, Style
 def clear(): os.system('clear')
 init(autoreset=True)
